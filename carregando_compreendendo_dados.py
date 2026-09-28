@@ -79,3 +79,25 @@ def dsa_limpa_texto(texto):
 df_dsa['texto_limpo'] = df_dsa['texto_review'].apply(dsa_limpa_texto)
 
 print(df_dsa.head())
+
+# Engenharia de Atributos
+# Mapear o sentimento para valores númericos (Engenharia de Atributos)
+df_dsa['sentimento_label'] = df_dsa['sentimento'].map({'positivo': 1, 'negativo': 0})
+print("\nDataFrame após a limpeza e mapeamento:\n")
+df_dsa[['texto_limpo', 'sentimento_label']].head()
+
+# Divisão em Dados de Treino de Teste
+
+# Definir variáveis X(entrada) y(saída)
+X = df_dsa['texto_limpo']
+y = df_dsa['sentimento_label']
+X_treino, X_teste, y_treino, y_teste = train_test_split(X, y, test_size = 0.25, random_state = 42, stratify = y )
+
+# Pipeline de Modelagem Preditiva
+pipeline = Pipeline([
+    ('tfidf', TfidfVectorizer(stop_words = ['de', 'a', 'o', 'que', 'e', 'do', 'da', 'em', 'um'])),
+
+    ('scaler', StandardScaler(with_mean = False)),
+
+    ('logred', LogisticRegression(solver = 'liblinear', random_state = 42, max_iter = 1000))
+])
